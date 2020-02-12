@@ -1,18 +1,23 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import { firebase } from "../firebase";
-import { currentuserid } from "../constants";
+
 import { CollatedShoutsExist } from "../helpers";
 
 export const useShouts = selectedCategory => {
   const [shouts, setShouts] = useState([]);
   const [archivedShouts, setArchivedShouts] = useState([]);
-
+  const [curUserId, setCurUserId] = useState("");
+  const GetUser = () => {
+    return firebase.auth().onAuthStateChanged(user => {
+      if (user !== null) {
+        setCurUserId(user.uid);
+      }
+    });
+  };
+  GetUser();
   useEffect(() => {
-    let unsubscribe = firebase
-      .firestore()
-      .collection("shoutouts")
-     
+    let unsubscribe = firebase.firestore().collection("shoutouts");
 
     unsubscribe =
       selectedCategory && !CollatedShoutsExist(selectedCategory)
@@ -30,7 +35,7 @@ export const useShouts = selectedCategory => {
         : // : selectedCategory === "INBOX" || selectedCategory === 0
         // ? (unsubscribe = unsubscribe.where("created", "==", ""))
         selectedCategory === "CURUSER" || selectedCategory === 0
-        ? (unsubscribe = unsubscribe.where("userId", "==", currentuserid))
+        ? (unsubscribe = unsubscribe.where("userId", "==", curUserId))
         : unsubscribe;
 
     unsubscribe = unsubscribe.onSnapshot(snapshot => {
