@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.scss";
+import { Header } from "./components/layout/Header";
+import { Content } from "./components/layout/Content";
+import { CategoriesProvider, SelectedCategoryProvider } from "./context";
 
-function App() {
+export const App = ({ darkModeDefault = false }) => {
+  const [darkMode, setDarkMode] = useState(darkModeDefault);
+  console.log("darkMode", darkMode);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <SelectedCategoryProvider>
+      <CategoriesProvider>
+        <div className="App">
+          <main className={darkMode ? "darkMode" : undefined}>
+            <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+            <Content darkMode={darkMode} setDarkMode={setDarkMode} />
+          </main>
+        </div>
+      </CategoriesProvider>
+    </SelectedCategoryProvider>
   );
-}
-
-export default App;
+};
